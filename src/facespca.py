@@ -63,6 +63,7 @@ meanimage = np.mean(images,0)
 fig, axes = plt.subplots(1,1)
 axes.imshow(np.reshape(meanimage,[versize,horsize])*255,cmap='gray')
 fig.suptitle('Imagen media')
+fig.show()
 
 #resto la media
 images  = [images[k,:]-meanimage for k in range(images.shape[0])]
@@ -75,8 +76,9 @@ num_eigenvectors = 1
 
 U1,S2,V3 = np.linalg.svd(images,full_matrices = False)
 eigen_values, U = SU(images, areasize, areasize - num_eigenvectors)
-S = SS(eigen_values, np.shape(images)[0], np.shape(images)[1])
-V = SV(S, U, images)
+#S = SS(eigen_values, np.shape(images)[0], np.shape(images)[1])
+#V = SV(S, U, images)
+V = np.dot(U, images)
 
 #Primera autocara...
 eigen1 = (np.reshape(V[0,:],[versize,horsize]))*255

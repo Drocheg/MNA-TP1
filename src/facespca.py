@@ -73,8 +73,8 @@ images = np.asanyarray(images)
 
 num_eigenvectors = 1
 
-U,S,V = np.linalg.svd(images,full_matrices = False)
-# eigen_values, V = SV(images, areasize, areasize-num_eigenvectors)
+# U,S,V = np.linalg.svd(images,full_matrices = False)
+eigen_values, V = SV(images, areasize, areasize-num_eigenvectors)
 # eigen_values, U = SU(images)
 
 #Primera autocara...

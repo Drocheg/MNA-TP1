@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.linalg import eigh
 
-def     SV(matrix, areasize, minEig):
+def SV(matrix, areasize, minEig):
 
     auxMatrix = matrix.T @ matrix
     #auxMatrix = matrix @ matrix.T
@@ -9,7 +9,7 @@ def     SV(matrix, areasize, minEig):
     #eigen_values, eigen_vectors = eigh(auxMatrix, eigvals = (0,0))
     eigen_values, eigen_vectors = _eig(auxMatrix)
 
-    eigen_vectors = eigen_vectors.T
+  #  eigen_vectors = eigen_vectors.T
 
     indexSort = np.argsort(np.absolute(eigen_values))[::-1]
 
@@ -60,14 +60,14 @@ def _householder(matrix):
 
 
 def _eig(matrix, method=_householder, iterations=50, tolerance=1e-4):
-    a = np.matrix(matrix, dtype=np.float32)
+    a = np.matrix(matrix, dtype=np.float64)
 
     q, r = method(a)
     a = np.matmul(r, q)
     s = q
 
     for i in range(iterations):
-        print(i)
+       # print(i)
         q, r = method(a)
         a = np.matmul(r, q)
         s = np.matmul(s, q)

@@ -1,9 +1,9 @@
 import numpy as np
 from scipy.linalg import eigh
 
-def SV(matrix, areasize, minEig):
+def SU(matrix, areasize, minEig):
 
-    auxMatrix = matrix.T @ matrix
+    auxMatrix = np.dot(matrix, matrix.T)
     #auxMatrix = matrix @ matrix.T
     #eigen_values, eigen_vectors = np.linalg.eig(auxMatrix)
     #eigen_values, eigen_vectors = eigh(auxMatrix, eigvals = (0,0))
@@ -18,18 +18,21 @@ def SV(matrix, areasize, minEig):
 
     return eigen_values, eigen_vectors
 
+def SS(eigen_values, n, p):
 
-def SU(matrix):
+    S = np.zeros((n,p))
 
-    auxMatrix = matrix @ matrix.T
-    eigen_values, eigen_vectors = np.linalg.eig(auxMatrix)
+    for i in range(0, n):
+        S[i, i] = 1/np.sqrt(eigen_values[i])
 
-    indexSort = np.argsort(np.absolute(eigen_values))[::-1]
+    return S
 
-    eigen_values = eigen_values[indexSort]
-    eigen_vectors = eigen_vectors[indexSort]
 
-    return eigen_values, eigen_vectors
+
+def SV(S, U, matrix):
+
+    V = np.dot(np.dot(matrix.T, U), S)
+    return V
 
 
 

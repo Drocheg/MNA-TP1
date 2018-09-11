@@ -73,9 +73,10 @@ images = np.asanyarray(images)
 
 num_eigenvectors = 1
 
-# U,S,V = np.linalg.svd(images,full_matrices = False)
-eigen_values, V = SV(images, areasize, areasize-num_eigenvectors)
-# eigen_values, U = SU(images)
+U1,S2,V3 = np.linalg.svd(images,full_matrices = False)
+eigen_values, U = SU(images, areasize, areasize - num_eigenvectors)
+S = SS(eigen_values, np.shape(images)[0], np.shape(images)[1])
+V = SV(S, U, images)
 
 #Primera autocara...
 eigen1 = (np.reshape(V[0,:],[versize,horsize]))*255
@@ -92,17 +93,19 @@ eigen3 = (np.reshape(V[2,:],[versize,horsize]))*255
 fig, axes = plt.subplots(1,1)
 axes.imshow(eigen2,cmap='gray')
 fig.suptitle('Tercera autocara')
+fig.show()
 
 
-nmax = num_eigenvectors
-#nmax = V.shape[0]
+#nmax = num_eigenvectors
+nmax = np.shape(V)[0]
+
 accs = np.zeros([nmax,1])
 for neigen in range(1,nmax):
     #Me quedo sólo con las primeras autocaras
     B = V[0:neigen,:]
     #proyecto
-    improy      = np.dot(images,np.transpose(B))
-    imtstproy   = np.dot(imagetst,np.transpose(B))
+    improy      = np.dot(images, B.T)
+    imtstproy   = np.dot(imagetst, B.T)
     #improy      = B @ images
     #imtstproy   = B @ imagetst
 

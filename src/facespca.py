@@ -41,6 +41,7 @@ for dire in onlydirs:
     per += 1
     if per >= personno:
         break
+
 #TEST SET
 imagetst  = np.zeros([tstno,areasize])
 persontst = np.zeros([tstno,1])
@@ -55,8 +56,6 @@ for dire in onlydirs:
     per += 1
     if per >= personno:
         break
-
-
     
 #CARA MEDIA
 meanimage = np.mean(images,0)
@@ -70,41 +69,39 @@ imagetst= [imagetst[k,:]-meanimage for k in range(imagetst.shape[0])]
 
 #PCA
 images = np.asanyarray(images)
-
 num_eigenvectors = 1
+V = svd(images)
 
-# U,S,V = np.linalg.svd(images,full_matrices = False)
-eigen_values, V = SV(images, areasize, areasize-num_eigenvectors)
-# eigen_values, U = SU(images)
+# Primera autocara...
 
-#Primera autocara...
-eigen1 = (np.reshape(V[0,:],[versize,horsize]))*255
-fig, axes = plt.subplots(1,1)
-axes.imshow(eigen1,cmap='gray')
+eigen1 = (np.reshape(V[0, :], [versize, horsize])) * 255
+fig, axes = plt.subplots(1, 1)
+axes.imshow(eigen1, cmap='gray')
 fig.suptitle('Primera autocara')
 
-eigen2 = (np.reshape(V[1,:],[versize,horsize]))*255
-fig, axes = plt.subplots(1,1)
-axes.imshow(eigen2,cmap='gray')
+eigen2 = (np.reshape(V[1, :], [versize, horsize])) * 255
+fig, axes = plt.subplots(1, 1)
+axes.imshow(eigen2, cmap='gray')
 fig.suptitle('Segunda autocara')
 
-eigen3 = (np.reshape(V[2,:],[versize,horsize]))*255
-fig, axes = plt.subplots(1,1)
-axes.imshow(eigen2,cmap='gray')
+eigen3 = (np.reshape(V[2, :], [versize, horsize])) * 255
+fig, axes = plt.subplots(1, 1)
+axes.imshow(eigen2, cmap='gray')
 fig.suptitle('Tercera autocara')
+fig.show()
 
+#nmax = num_eigenvectors
+nmax = np.shape(V)[0]
 
-nmax = num_eigenvectors
-#nmax = V.shape[0]
 accs = np.zeros([nmax,1])
 for neigen in range(1,nmax):
+
     #Me quedo sólo con las primeras autocaras
     B = V[0:neigen,:]
+
     #proyecto
-    improy      = np.dot(images,np.transpose(B))
-    imtstproy   = np.dot(imagetst,np.transpose(B))
-    #improy      = B @ images
-    #imtstproy   = B @ imagetst
+    improy      = np.dot(images, B.T)
+    imtstproy   = np.dot(imagetst, B.T)
 
     #SVM
     #entreno
@@ -118,4 +115,5 @@ axes.semilogy(range(nmax),(1-accs)*100)
 axes.set_xlabel('No. autocaras')
 axes.grid(which='Both')
 fig.suptitle('Error')
+fig.show()
 

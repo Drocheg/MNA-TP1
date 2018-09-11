@@ -10,8 +10,9 @@ from scipy import ndimage as im
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
+from svd import *
 
-mypath      = 'att_faces/'
+mypath      = './../att_faces/'
 onlydirs    = [f for f in listdir(mypath) if isdir(join(mypath, f))]
 
 #image size
@@ -20,7 +21,7 @@ versize     = 112
 areasize    = horsize*versize
 
 #number of figures
-personno    = 40
+personno    = 20
 trnperper   = 6
 tstperper   = 4
 trnno       = personno*trnperper
@@ -38,7 +39,8 @@ for dire in onlydirs:
         person[imno,0] = per
         imno += 1
     per += 1
-
+    if per >= personno:
+        break
 #TEST SET
 imagetst  = np.zeros([tstno,areasize])
 persontst = np.zeros([tstno,1])
@@ -51,6 +53,8 @@ for dire in onlydirs:
         persontst[imno,0] = per
         imno += 1
     per += 1
+    if per >= personno:
+        break
 
 
     
@@ -65,7 +69,13 @@ images  = [images[k,:]-meanimage for k in range(images.shape[0])]
 imagetst= [imagetst[k,:]-meanimage for k in range(imagetst.shape[0])]
 
 #PCA
+images = np.asanyarray(images)
+
+num_eigenvectors = 1
+
 U,S,V = np.linalg.svd(images,full_matrices = False)
+# eigen_values, V = SV(images, areasize, areasize-num_eigenvectors)
+# eigen_values, U = SU(images)
 
 #Primera autocara...
 eigen1 = (np.reshape(V[0,:],[versize,horsize]))*255
@@ -84,7 +94,8 @@ axes.imshow(eigen2,cmap='gray')
 fig.suptitle('Tercera autocara')
 
 
-nmax = V.shape[0]
+nmax = num_eigenvectors
+#nmax = V.shape[0]
 accs = np.zeros([nmax,1])
 for neigen in range(1,nmax):
     #Me quedo sólo con las primeras autocaras
@@ -92,7 +103,9 @@ for neigen in range(1,nmax):
     #proyecto
     improy      = np.dot(images,np.transpose(B))
     imtstproy   = np.dot(imagetst,np.transpose(B))
-        
+    #improy      = B @ images
+    #imtstproy   = B @ imagetst
+
     #SVM
     #entreno
     clf = svm.LinearSVC()

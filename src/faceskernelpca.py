@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
 
-mypath      = 'att_faces/'
+mypath      = './../att_faces/'
 onlydirs    = [f for f in listdir(mypath) if isdir(join(mypath, f))]
 
 #image size
@@ -84,7 +84,7 @@ imtstproypre= np.dot(Ktest,alpha)
 #from sklearn.decomposition import KernelPCA
 
 #kpca = KernelPCA(n_components = None, kernel='poly', degree=2, gamma = 1, coef0 = 0)
-#kpca = KernelPCA(n_components = None, kernel='poly', degree=2)
+#kpca =  (n_components = None, kernel='poly', degree=2)
 #kpca.fit(images)
 
 #improypre = kpca.transform(images)

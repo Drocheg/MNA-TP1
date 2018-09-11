@@ -12,7 +12,7 @@ from scipy import ndimage as im
 import numpy as np
 import matplotlib.pyplot as plt
 
-mypath      = 'att_faces/'
+mypath      = './../att_faces/'
 onlydirs    = [f for f in listdir(mypath) if isdir(join(mypath, f))]
 
 #image size
@@ -46,6 +46,7 @@ images  = [images[k,:]-meanimage for k in range(images.shape[0])]
 
 #PCA
 U,S,V = np.linalg.svd(images,full_matrices = False)
+#eigen_values, V = pca(images)
 
 #Primera autocara...
 eigen1 = (np.reshape(V[0,:],[versize,horsize]))*255
@@ -62,4 +63,5 @@ eigen3 = (np.reshape(V[2,:],[versize,horsize]))*255
 fig, axes = plt.subplots(1,1)
 axes.imshow(eigen2,cmap='gray')
 fig.suptitle('Tercera autocara')
+
 

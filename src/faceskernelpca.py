@@ -10,6 +10,8 @@ from scipy import ndimage as im
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
+from svd import *
+from svd import _eig
 
 mypath      = './../att_faces/'
 onlydirs    = [f for f in listdir(mypath) if isdir(join(mypath, f))]
@@ -56,20 +58,20 @@ for dire in onlydirs:
 degree = 2
 K = (np.dot(images,images.T)/trnno+1)**degree
 #K = (K + K.T)/2.0
-        
+
 #esta transformación es equivalente a centrar las imágenes originales...
 unoM = np.ones([trnno,trnno])/trnno
 K = K - np.dot(unoM,K) - np.dot(K,unoM) + np.dot(unoM,np.dot(K,unoM))
 
 
 #Autovalores y autovectores
-w,alpha = np.linalg.eigh(K)
+w,alpha = _eig(K)
 lambdas = w/trnno
 lambdas = w
 
 #Los autovalores vienen en orden descendente. Lo cambio 
-lambdas = np.flipud(lambdas)
-alpha   = np.fliplr(alpha)
+# lambdas = np.flipud(lambdas)
+# alpha   = np.fliplr(alpha)
 
 for col in range(alpha.shape[1]):
     alpha[:,col] = alpha[:,col]/np.sqrt(lambdas[col])
@@ -110,4 +112,5 @@ axes.semilogy(range(nmax),(1-accs)*100)
 axes.set_xlabel('No. autocaras')
 axes.grid(which='Both')
 fig.suptitle('Error')
+fig.show()
 

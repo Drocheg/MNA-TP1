@@ -1,7 +1,13 @@
 import numpy as np
 from scipy.linalg import eigh
 
-def SU(matrix, areasize, minEig):
+def svd(matrix):
+    eigen_values, U = SU(matrix)
+    # S = SS(eigen_values, np.shape(images)[0], np.shape(images)[1])
+    # V = SV(S, U, images)
+    return np.dot(U, matrix)
+
+def SU(matrix):
 
     auxMatrix = np.dot(matrix, matrix.T)
     #auxMatrix = matrix @ matrix.T
@@ -18,21 +24,21 @@ def SU(matrix, areasize, minEig):
 
     return eigen_values, eigen_vectors
 
-def SS(eigen_values, n, p):
-
-    S = np.zeros((n,p))
-
-    for i in range(0, n):
-        S[i, i] = 1/np.sqrt(eigen_values[i])
-
-    return S
-
-
-
-def SV(S, U, matrix):
-
-    V = np.dot(np.dot(matrix.T, U), S)
-    return V
+# def SS(eigen_values, n, p):
+#
+#     S = np.zeros((n,p))
+#
+#     for i in range(0, n):
+#         S[i, i] = 1/np.sqrt(eigen_values[i])
+#
+#     return S
+#
+#
+#
+# def SV(S, U, matrix):
+#
+#     V = np.dot(np.dot(matrix.T, U), S)
+#     return V
 
 
 

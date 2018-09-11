@@ -21,7 +21,7 @@ versize     = 112
 areasize    = horsize*versize
 
 #number of figures
-personno    = 20
+personno    = 40
 trnperper   = 6
 tstperper   = 4
 trnno       = personno*trnperper
@@ -55,7 +55,7 @@ for dire in onlydirs:
         imno += 1
     per += 1
     if per >= personno:
-        break
+       break
     
 #CARA MEDIA
 meanimage = np.mean(images,0)
@@ -68,8 +68,7 @@ images  = [images[k,:]-meanimage for k in range(images.shape[0])]
 imagetst= [imagetst[k,:]-meanimage for k in range(imagetst.shape[0])]
 
 #PCA
-images = np.asanyarray(images)
-num_eigenvectors = 1
+images = np.asarray(images)
 V = svd(images)
 
 # Primera autocara...
@@ -86,12 +85,12 @@ fig.suptitle('Segunda autocara')
 
 eigen3 = (np.reshape(V[2, :], [versize, horsize])) * 255
 fig, axes = plt.subplots(1, 1)
-axes.imshow(eigen2, cmap='gray')
+axes.imshow(eigen3, cmap='gray')
 fig.suptitle('Tercera autocara')
 fig.show()
 
 #nmax = num_eigenvectors
-nmax = np.shape(V)[0]
+nmax = np.shape(V)[0]//2
 
 accs = np.zeros([nmax,1])
 for neigen in range(1,nmax):
@@ -115,5 +114,4 @@ axes.semilogy(range(nmax),(1-accs)*100)
 axes.set_xlabel('No. autocaras')
 axes.grid(which='Both')
 fig.suptitle('Error')
-fig.show()
-
+plt.show()

@@ -58,8 +58,30 @@ def _householder(matrix):
         q[:, i:] = q[:, i:] - np.matmul(q[:, i:], tm)
     return q, r
 
+def _gram_schmidt(matrix):
+    """ Calculates the QR decomposition using the Gram Schmidt method.
+            Params:
+                matrix (np.matrix): the matrix to decompose.
+            Returns:
+                q (np.ndarray): The Q orthogonal matrix.
+                r (np.ndarray): The R upper triangular matrix.
+            Reference:
+                http://web.mit.edu/18.06/www/Essays/gramschmidtmat.pdf
+            """
+    m, n = matrix.shape
+    q = np.zeros((m, n))
+    r = np.zeros((n, n))
+    for j in range(n):
+        v = matrix[:, j]
+        for i in range(j):
+            r[i, j] = np.matmul(q[:, i].T, matrix[:, j])
+            v = v.squeeze() - np.dot(r[i, j], q[:, i])
+        r[j, j] = np.linalg.norm(v)
+        q[:, j] = np.divide(v, r[j, j]).squeeze()
+    return q, r
 
-def _eig(matrix, method=_householder, iterations=50, tolerance=1e-4):
+
+def _eig(matrix, method=_gram_schmidt, iterations=50, tolerance=1e-4):
     a = np.matrix(matrix, dtype=np.float64)
 
     q, r = method(a)

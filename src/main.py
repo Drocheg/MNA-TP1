@@ -6,11 +6,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
 from sys import stdin
+
+
 from utils import *
-from svd import *
-from svd import _eig
 
 import argparse
+
+from src.svd import svd, _eig
+from src.utils import openImages
 
 parser = argparse.ArgumentParser(description='Facial recognition system.')
 parser.add_argument("--kernel", "-k", help="Uses KPCA", action="store_true",
@@ -19,6 +22,9 @@ parser.add_argument("--faces_directory", help="Path to the directory with the fa
                     default='./../att_faces/')
 parser.add_argument("--face_test_directory", help="Path to the directory with the faces to test.", action="store",
                     default='./../att_faces/')
+parser.add_argument("--eigenfaces", help="How many eigenfaces are used.", action="store", default=50)
+parser.add_argument("--training", help="How many photos used for training out of 10.", action="store",
+                    choices=[1,2,3,4,5,6,7,8,9,10], type=int, default=6)
 args = parser.parse_args()
 
 mypath = args.faces_directory
@@ -29,15 +35,13 @@ versize     = 112
 areasize    = horsize*versize
 
 #number of figures
-personno    = 40
-trnperper   = 6
-tstperper   = 4
+personno    = 41
+trnperper   = args.training
+tstperper   = 10 - args.training
 trnno = personno * trnperper
 tstno = personno * tstperper
 
 clf = svm.LinearSVC()
-
-num_components = 10
 
 # TRAINING
 
@@ -58,7 +62,7 @@ if args.kernel:
 
     # pre-proyección
     improypre = np.dot(K.T, alpha)
-    proy_training = improypre[:, 0:num_components]
+    proy_training = improypre[:, 0:args.eigenfaces]
 
 else:
 
@@ -69,7 +73,7 @@ else:
     images_training = np.asarray(images_training)
     V = svd(images_training)
 
-    B = V[0:num_components, :]
+    B = V[0:args.eigenfaces, :]
     proy_training = np.dot(images_training, B.T)
 
 clf.fit(proy_training, person_training.ravel())
@@ -86,7 +90,7 @@ while(True):
         Ktest = (np.dot(a, images_training.T) / trnno + 1) ** degree
         Ktest = Ktest - np.dot(unoML, K) - np.dot(Ktest, unoM) + np.dot(unoML, np.dot(K, unoM))
         imtstproypre = np.dot(Ktest, alpha)
-        proy_test = improypre[:, 0:num_components]
+        proy_test = improypre[:, 0:args.eigenfaces]
     else:
         a -= meanimage
         proy_test = np.dot(a, B.T)

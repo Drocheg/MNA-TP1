@@ -47,6 +47,9 @@ clf = svm.LinearSVC()
 
 images_training, person_training = openImages(path=mypath, personno=personno, trnperper=trnperper, areasize=areasize)
 if args.kernel:
+    images_training *= 255.0
+    images_training -= 127.5
+    images_training /= 127.5
 
     # KERNEL: polinomial de grado degree
     degree = 2
@@ -84,14 +87,15 @@ test_path = args.face_test_directory
 while(True):
     print("Input face path")
     picture_path = stdin.readline().rstrip().split()[0]
-    a = np.reshape(im.imread(test_path + picture_path + '.pgm') / 255.0, [1, areasize])
     if args.kernel:
-        unoML = np.ones([tstno, trnno]) / trnno
+        a = np.reshape((im.imread(test_path + picture_path + '.pgm') - 127.5) / 127.5, [1, areasize])
+        unoML = np.ones([1, trnno]) / trnno
         Ktest = (np.dot(a, images_training.T) / trnno + 1) ** degree
         Ktest = Ktest - np.dot(unoML, K) - np.dot(Ktest, unoM) + np.dot(unoML, np.dot(K, unoM))
         imtstproypre = np.dot(Ktest, alpha)
-        proy_test = improypre[:, 0:args.eigenfaces]
+        proy_test = imtstproypre[:, 0:args.eigenfaces]
     else:
+        a = np.reshape(im.imread(test_path + picture_path + '.pgm') / 255.0, [1, areasize])
         a -= meanimage
         proy_test = np.dot(a, B.T)
     print(clf.predict(proy_test))

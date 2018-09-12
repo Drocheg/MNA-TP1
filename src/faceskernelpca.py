@@ -70,8 +70,8 @@ lambdas = w/trnno
 lambdas = w
 
 #Los autovalores vienen en orden descendente. Lo cambio 
-# lambdas = np.flipud(lambdas)
-# alpha   = np.fliplr(alpha)
+#lambdas = np.flipud(lambdas)
+#alpha   = np.fliplr(alpha)
 
 for col in range(alpha.shape[1]):
     alpha[:,col] = alpha[:,col]/np.sqrt(lambdas[col])

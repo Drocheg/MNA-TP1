@@ -41,6 +41,7 @@ fig, axes = plt.subplots(1,1)
 axes.imshow(np.reshape(meanimage,[versize,horsize])*255,cmap='gray')
 fig.suptitle('Imagen media')
 
+
 #resto la media
 images  = [images[k,:]-meanimage for k in range(images.shape[0])]
 

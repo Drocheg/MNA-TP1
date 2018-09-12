@@ -13,6 +13,8 @@ from sklearn import svm
 from svd import *
 from svd import _eig
 
+from svd import _eig
+
 mypath      = './../att_faces/'
 onlydirs    = [f for f in listdir(mypath) if isdir(join(mypath, f))]
 
@@ -91,6 +93,7 @@ imtstproypre= np.dot(Ktest,alpha)
 
 #improypre = kpca.transform(images)
 #imtstproypre = kpca.transform(imagetst)
+
 
 nmax = alpha.shape[1]
 accs = np.zeros([nmax,1])

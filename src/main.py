@@ -35,7 +35,7 @@ versize     = 112
 areasize    = horsize*versize
 
 #number of figures
-personno    = 41
+personno    = 42
 trnperper   = args.training
 tstperper   = 10 - args.training
 trnno = personno * trnperper

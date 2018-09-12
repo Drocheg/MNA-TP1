@@ -21,7 +21,7 @@ versize     = 112
 areasize    = horsize*versize
 
 #number of figures
-personno    = 40
+personno    = 41
 trnperper   = 6
 tstperper   = 4
 trnno       = personno*trnperper

@@ -86,7 +86,7 @@ def eig_with_variance_explained(eigen_values, eigen_vectors, variance_percentage
     while partial_sum <= variance_threshold:
         partial_sum += eigen_values[eigen_count]
         eigen_count += 1
-    return eigen_values[:eigen_count], eigen_vectors[:eigen_count]
+    return eigen_count
 
 
 def variance_explained_from_eigen_values(eigen_values, amount):

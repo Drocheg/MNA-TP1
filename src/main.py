@@ -1,11 +1,15 @@
 
 from os import listdir
 from os.path import join, isdir
+
+import matplotlib
 from scipy import ndimage as im
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
 from sys import stdin
+import cv2
+import src.face_detector as fd
 
 
 from utils import *
@@ -84,51 +88,62 @@ clf.fit(proy_training, person_training.ravel())
 
 # TEST PICTURES
 test_path = args.face_test_directory
+
+video_capture = cv2.VideoCapture(0)
 while(True):
-    print("Input face path")
-    picture_path = stdin.readline().rstrip().split()[0]
-    if args.kernel:
-        a = np.reshape((im.imread(test_path + picture_path + '.pgm') - 127.5) / 127.5, [1, areasize])
-        unoML = np.ones([1, trnno]) / trnno
-        Ktest = (np.dot(a, images_training.T) / trnno + 1) ** degree
-        Ktest = Ktest - np.dot(unoML, K) - np.dot(Ktest, unoM) + np.dot(unoML, np.dot(K, unoM))
-        imtstproypre = np.dot(Ktest, alpha)
-        proy_test = imtstproypre[:, 0:args.eigenfaces]
-    else:
-        a = np.reshape(im.imread(test_path + picture_path + '.pgm') / 255.0, [1, areasize])
-        a -= meanimage
-        proy_test = np.dot(a, B.T)
-    print(clf.predict(proy_test))
+    ret, frame = video_capture.read()
 
-# TEST SET
-# images_test, person_test = openImages(path=mypath, personno=personno, trnperper=tstperper, areasize=areasize)
-# imagetst = [images_test[k, :] - meanimage for k in range(images_test.shape[0])]
-# proy_test = np.dot(imagetst, B.T)
-# score = clf.score(proy_test, person_test.ravel())
+    if not ret:
+        # print("The video capture is not working.")
+        continue
 
-# Kernel test
-# unoML = np.ones([tstno, trnno]) / trnno
-# Ktest = (np.dot(imagetst, images.T) / trnno + 1) ** degree
-# Ktest = Ktest - np.dot(unoML, K) - np.dot(Ktest, unoM) + np.dot(unoML, np.dot(K, unoM))
-# imtstproypre = np.dot(Ktest, alpha)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
+    cascPath = "./haarcascade_frontalface_default.xml"
 
+    faceCascade = cv2.CascadeClassifier(cascPath)
 
+    faces = faceCascade.detectMultiScale(
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(92, 112)
+    )
 
+    #Draw a rectangle around the faces
+    for f in faces:
+        x, y, w, h = fd.resizeFace(f)
+        if x < 0 or y < 0 or x + w > 1280 or y + h > 1280:
+            continue
+        cv2.rectangle(gray, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        a = cv2.resize(gray, (92,112))
+        a = np.array(a).ravel()
+        a = np.float64(a)
 
+        if args.kernel:
+            unoML = np.ones([1, trnno]) / trnno
+            Ktest = (np.dot(a, images_training.T) / trnno + 1) ** degree
+            Ktest = Ktest - np.dot(unoML, K) - np.dot(Ktest, unoM) + np.dot(unoML, np.dot(K, unoM))
+            imtstproypre = np.dot(Ktest, alpha)
+            proy_test = imtstproypre[:, 0:args.eigenfaces]
+        else:
+            a -= meanimage
+            proy_test = np.dot(a, B.T)
 
+        # cv2.putText(frame, "It is subject " + clf.predict(proy_test)[0].astype(int).astype(str) + "!",
+        #             (x, y - 15), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 4)
+        print("It is subject " + clf.predict(proy_test)[0].astype(int).astype(str) + "!")
 
+    # Display the resulting frame
+    cv2.imshow('Video', frame)
 
+    # if cv2.waitKey(1) & 0xFF == ord(' ') and frame is not None and len(faces) > 0:
+    #     newImg = fd.cropImage(frame, fd.resizeFace(faces[0]))
+    #     newImg = fd.resizeImg(newImg)
 
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-
-
-
-
-
-
-
-
-
-
-
+# When everything is done, release the capture
+video_capture.release()
+cv2.destroyAllWindows()

@@ -66,7 +66,6 @@ def _eig(matrix, method=_gram_schmidt, iterations=50, tolerance=1e-4):
     s = q
 
     for i in range(iterations):
-       # print(i)
         q, r = method(a)
         a = np.matmul(r, q)
         s = np.matmul(s, q)

@@ -5,10 +5,11 @@ def svd(matrix):
     eigen_values, U = _eig(auxMatrix)
     indexSort = np.argsort(np.absolute(eigen_values))[::-1]
     U = U[indexSort]
+    eigen_values = eigen_values[indexSort]
     V = U @ matrix
     col_norms = np.linalg.norm(V, axis=1)
     V = V / col_norms[:, None]
-    return V
+    return eigen_values, V
 
 def _householder(matrix):
     """ Calculates the QR decomposition using the Householder method.
@@ -75,3 +76,18 @@ def _eig(matrix, method=_gram_schmidt, iterations=50, tolerance=1e-4):
 
     eigenvalues = np.diag(a)
     return eigenvalues, s
+
+
+def eig_with_variance_explained(eigen_values, eigen_vectors, variance_percentage):
+    total_variance = sum(eigen_values)
+    variance_threshold = total_variance * variance_percentage
+    partial_sum = 0
+    eigen_count = 0
+    while partial_sum <= variance_threshold:
+        partial_sum += eigen_values[eigen_count]
+        eigen_count += 1
+    return eigen_values[:eigen_count], eigen_vectors[:eigen_count]
+
+
+def variance_explained_from_eigen_values(eigen_values, amount):
+    return sum(eigen_values[:amount]) / sum(eigen_values)

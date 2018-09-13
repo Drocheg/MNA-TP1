@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm
 from sys import stdin
+from  sklearn.ensemble import GradientBoostingClassifier
 
 
 from utils import *
@@ -35,17 +36,17 @@ versize     = 112
 areasize    = horsize*versize
 
 #number of figures
-personno    = 42
+personno    = 40
 trnperper   = args.training
 tstperper   = 10 - args.training
 trnno = personno * trnperper
 tstno = personno * tstperper
 
 clf = svm.LinearSVC()
-
+#clf = GradientBoostingClassifier()
 # TRAINING
 
-images_training, person_training = openImages(path=mypath, personno=personno, trnperper=trnperper, areasize=areasize)
+images_training, person_training, names_dictionary = openImages(path=mypath, personno=personno, trnperper=trnperper, areasize=areasize)
 if args.kernel:
     images_training *= 255.0
     images_training -= 127.5
@@ -98,7 +99,8 @@ while(True):
         a = np.reshape(im.imread(test_path + picture_path + '.pgm') / 255.0, [1, areasize])
         a -= meanimage
         proy_test = np.dot(a, B.T)
-    print(clf.predict(proy_test))
+    prediction = clf.predict(proy_test)
+    print(names_dictionary[prediction[0]//1])
 
 # TEST SET
 # images_test, person_test = openImages(path=mypath, personno=personno, trnperper=tstperper, areasize=areasize)

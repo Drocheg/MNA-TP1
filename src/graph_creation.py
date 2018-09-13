@@ -40,3 +40,12 @@ axes.set_xlabel('No. autocaras')
 axes.grid(which='Both')
 fig.suptitle('Variance')
 plt.show()
+
+
+fig, axes = plt.subplots(1,1)
+axes.semilogy(variance,(1-errors)*100)
+axes.set_xlabel('Varianza')
+axes.grid(which='Both')
+fig.suptitle('Variance-Error')
+plt.show()
+

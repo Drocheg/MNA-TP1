@@ -69,7 +69,7 @@ imagetst= [imagetst[k,:]-meanimage for k in range(imagetst.shape[0])]
 
 #PCA
 images = np.asarray(images)
-V = svd(images)
+eigen_values, V = svd(images)
 
 # Primera autocara...
 

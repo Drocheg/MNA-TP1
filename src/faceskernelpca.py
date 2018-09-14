@@ -25,8 +25,8 @@ areasize    = horsize*versize
 
 #number of figures
 personno    = 40
-trnperper   = 9
-tstperper   = 1
+trnperper   = 6
+tstperper   = 4
 trnno       = personno*trnperper
 tstno       = personno*tstperper
 
@@ -42,6 +42,8 @@ for dire in onlydirs:
         person[imno,0] = per
         imno += 1
     per += 1
+    if per >= personno:
+        break
 
 #TEST SET
 imagetst  = np.zeros([tstno,areasize])
@@ -55,25 +57,21 @@ for dire in onlydirs:
         persontst[imno,0] = per
         imno += 1
     per += 1
+    if per >= personno:
+        break
 
 #KERNEL: polinomial de grado degree
 degree = 2
 K = (np.dot(images,images.T)/trnno+1)**degree
-#K = (K + K.T)/2.0
 
 #esta transformación es equivalente a centrar las imágenes originales...
 unoM = np.ones([trnno,trnno])/trnno
 K = K - np.dot(unoM,K) - np.dot(K,unoM) + np.dot(unoM,np.dot(K,unoM))
 
-
 #Autovalores y autovectores
 w,alpha = _eig(K)
 lambdas = w/trnno
 lambdas = w
-
-#Los autovalores vienen en orden descendente. Lo cambio 
-#lambdas = np.flipud(lambdas)
-#alpha   = np.fliplr(alpha)
 
 for col in range(alpha.shape[1]):
     alpha[:,col] = alpha[:,col]/np.sqrt(lambdas[col])
@@ -84,16 +82,6 @@ unoML       = np.ones([tstno,trnno])/trnno
 Ktest       = (np.dot(imagetst,images.T)/trnno+1)**degree
 Ktest       = Ktest - np.dot(unoML,K) - np.dot(Ktest,unoM) + np.dot(unoML,np.dot(K,unoM))
 imtstproypre= np.dot(Ktest,alpha)
-
-#from sklearn.decomposition import KernelPCA
-
-#kpca = KernelPCA(n_components = None, kernel='poly', degree=2, gamma = 1, coef0 = 0)
-#kpca =  (n_components = None, kernel='poly', degree=2)
-#kpca.fit(images)
-
-#improypre = kpca.transform(images)
-#imtstproypre = kpca.transform(imagetst)
-
 
 nmax = alpha.shape[1]
 accs = np.zeros([nmax,1])

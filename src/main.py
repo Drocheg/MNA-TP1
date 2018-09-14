@@ -7,12 +7,8 @@ import matplotlib.pyplot as plt
 from sklearn import svm
 from sys import stdin
 from  sklearn.ensemble import GradientBoostingClassifier
-
-
 from utils import *
-
 import argparse
-
 from src.svd import svd, _eig
 from src.utils import openImages
 
@@ -75,7 +71,7 @@ else:
     images_training = [images_training[k, :] - meanimage for k in range(images_training.shape[0])]
     # PCA
     images_training = np.asarray(images_training)
-    V = svd(images_training)
+    eigen_values, V = svd(images_training)
 
     B = V[0:args.eigenfaces, :]
     proy_training = np.dot(images_training, B.T)

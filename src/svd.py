@@ -11,41 +11,7 @@ def svd(matrix):
     V = V / col_norms[:, None]
     return eigen_values, V
 
-def _householder(matrix):
-    """ Calculates the QR decomposition using the Householder method.
-            Params:
-                matrix (np.matrix): the matrix to decompose.
-            Returns:
-                q (np.ndarray): The Q orthogonal matrix.
-                r (np.ndarray): The R upper triangular matrix.
-            Reference:
-                http://www.cs.cornell.edu/~bindel/class/cs6210-f09/lec18.pdf
-            """
-    m, n = matrix.shape
-    q = np.identity(m)
-    r = matrix.copy()
-    for i in range(0, m - 1):
-        v = r[i:m, i]
-        s = -np.sign(v[0]).item()
-        norm = np.linalg.norm(v)
-        u = (r[i, i] - (norm * s)).item()
-        v = np.divide(v, u)
-        v[0] = 1
-        tm = np.matmul(v, v.T) * (-s * u) / norm
-        r[i:, :] = np.subtract(r[i:m, :], np.matmul(tm, r[i:m, :]))
-        q[:, i:] = q[:, i:] - np.matmul(q[:, i:], tm)
-    return q, r
-
 def _gram_schmidt(matrix):
-    """ Calculates the QR decomposition using the Gram Schmidt method.
-            Params:
-                matrix (np.matrix): the matrix to decompose.
-            Returns:
-                q (np.ndarray): The Q orthogonal matrix.
-                r (np.ndarray): The R upper triangular matrix.
-            Reference:
-                http://web.mit.edu/18.06/www/Essays/gramschmidtmat.pdf
-            """
     m, n = matrix.shape
     q = np.zeros((m, n))
     r = np.zeros((n, n))
@@ -67,7 +33,6 @@ def _eig(matrix, method=_gram_schmidt, iterations=50, tolerance=1e-4):
     s = q
 
     for i in range(iterations):
-       # print(i)
         q, r = method(a)
         a = np.matmul(r, q)
         s = np.matmul(s, q)

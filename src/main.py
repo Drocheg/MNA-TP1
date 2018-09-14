@@ -101,36 +101,3 @@ while(True):
         proy_test = np.dot(a, B.T)
     prediction = clf.predict(proy_test)
     print(names_dictionary[prediction[0]//1])
-
-# TEST SET
-# images_test, person_test = openImages(path=mypath, personno=personno, trnperper=tstperper, areasize=areasize)
-# imagetst = [images_test[k, :] - meanimage for k in range(images_test.shape[0])]
-# proy_test = np.dot(imagetst, B.T)
-# score = clf.score(proy_test, person_test.ravel())
-
-# Kernel test
-# unoML = np.ones([tstno, trnno]) / trnno
-# Ktest = (np.dot(imagetst, images.T) / trnno + 1) ** degree
-# Ktest = Ktest - np.dot(unoML, K) - np.dot(Ktest, unoM) + np.dot(unoML, np.dot(K, unoM))
-# imtstproypre = np.dot(Ktest, alpha)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
